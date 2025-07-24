@@ -39,7 +39,7 @@ const mockVehicles: Vehicle[] = [
   {
     id: '1',
     name: 'Accord Hybrid',
-    price: 32500,
+    price: 45500,
     year: 2024,
     image: sedanBlue,
     fuelType: 'hybrid',
@@ -52,7 +52,7 @@ const mockVehicles: Vehicle[] = [
   {
     id: '2',
     name: 'CR-V',
-    price: 28900,
+    price: 38900,
     year: 2024,
     image: suvSilver,
     fuelType: 'gas',
@@ -65,7 +65,7 @@ const mockVehicles: Vehicle[] = [
   {
     id: '3',
     name: 'Civic Hatchback',
-    price: 24200,
+    price: 32200,
     year: 2023,
     image: hatchbackWhite,
     fuelType: 'gas',
@@ -74,6 +74,71 @@ const mockVehicles: Vehicle[] = [
     horsepower: 180,
     features: ['Sport Mode', 'Manual Transmission', 'Compact & Efficient'],
     matchReason: 'Great value in your budget'
+  },
+  {
+    id: '4',
+    name: 'Pilot AWD',
+    price: 52900,
+    year: 2024,
+    image: suvSilver,
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '20/27',
+    horsepower: 280,
+    features: ['8-Seater', 'AWD Standard', 'Premium Audio'],
+    matchReason: 'Spacious for large families'
+  },
+  {
+    id: '5',
+    name: 'Civic Si',
+    price: 35900,
+    year: 2024,
+    image: sedanBlue,
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '27/37',
+    horsepower: 200,
+    features: ['Turbo Engine', '6-Speed Manual', 'Sport Suspension'],
+    matchReason: 'Perfect sporty driving experience'
+  },
+  {
+    id: '6',
+    name: 'Ridgeline',
+    price: 48900,
+    year: 2024,
+    image: suvSilver,
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '18/24',
+    horsepower: 280,
+    features: ['Truck Bed', 'AWD Available', 'Towing Package'],
+    matchReason: 'Great for work and adventure'
+  },
+  {
+    id: '7',
+    name: 'Accord Sport',
+    price: 41200,
+    year: 2024,
+    image: sedanBlue,
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '30/38',
+    horsepower: 192,
+    features: ['Sport Wheels', 'Dual Exhaust', 'Paddle Shifters'],
+    matchReason: 'Sporty yet practical sedan'
+  },
+  {
+    id: '8',
+    name: 'HR-V',
+    price: 29900,
+    year: 2024,
+    image: hatchbackWhite,
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '28/34',
+    horsepower: 158,
+    features: ['Compact SUV', 'Good Cargo Space', 'Honda Sensing'],
+    matchReason: 'Affordable and efficient SUV'
   }
 ];
 
