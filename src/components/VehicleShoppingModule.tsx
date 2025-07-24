@@ -80,7 +80,7 @@ const mockVehicles: Vehicle[] = [
 const VehicleShoppingModule = () => {
   const [preferenceMode, setPreferenceMode] = useState<'want' | 'dont-want'>('want');
   const [userInput, setUserInput] = useState('');
-  const [priceRange, setPriceRange] = useState([20000, 40000]);
+  const [priceRange, setPriceRange] = useState([30000, 60000]);
   const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [minHorsepower, setMinHorsepower] = useState([150]);
@@ -295,8 +295,8 @@ const VehicleShoppingModule = () => {
                   <Slider
                     value={priceRange}
                     onValueChange={setPriceRange}
-                    max={50000}
-                    min={15000}
+                    max={80000}
+                    min={20000}
                     step={1000}
                     className="w-full"
                   />
