@@ -84,7 +84,8 @@ const VehicleShoppingModule = () => {
   const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [minHorsepower, setMinHorsepower] = useState([150]);
-  const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>(mockVehicles);
+  const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleFuelTypeToggle = (fuelType: string) => {
     setSelectedFuelTypes(prev => 
@@ -100,6 +101,65 @@ const VehicleShoppingModule = () => {
         ? prev.filter(c => c !== condition)
         : [...prev, condition]
     );
+  };
+
+  const handleSearch = () => {
+    setHasSearched(true);
+    
+    // Filter vehicles based on current filters
+    let filtered = mockVehicles.filter(vehicle => {
+      const priceMatch = vehicle.price >= priceRange[0] && vehicle.price <= priceRange[1];
+      const fuelTypeMatch = selectedFuelTypes.length === 0 || selectedFuelTypes.includes(vehicle.fuelType);
+      const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(vehicle.condition);
+      const horsepowerMatch = vehicle.horsepower >= minHorsepower[0];
+      
+      return priceMatch && fuelTypeMatch && conditionMatch && horsepowerMatch;
+    });
+
+    // Simple NLP-style matching for user input
+    if (userInput.trim()) {
+      const inputLower = userInput.toLowerCase();
+      filtered = filtered.map(vehicle => {
+        let matchScore = 0;
+        let matchReason = '';
+
+        if (inputLower.includes('kid') || inputLower.includes('family')) {
+          if (vehicle.name.toLowerCase().includes('cr-v')) {
+            matchScore += 3;
+            matchReason = 'Perfect for families with kids';
+          }
+        }
+
+        if (inputLower.includes('fuel') || inputLower.includes('gas') || inputLower.includes('efficient')) {
+          if (vehicle.fuelType === 'hybrid' || parseInt(vehicle.mpg.split('/')[0]) > 30) {
+            matchScore += 2;
+            matchReason = 'Great fuel efficiency for your needs';
+          }
+        }
+
+        if (inputLower.includes('budget') || inputLower.includes('30k') || inputLower.includes('$30')) {
+          if (vehicle.price < 30000) {
+            matchScore += 2;
+            matchReason = 'Great value in your budget';
+          }
+        }
+
+        if (inputLower.includes('sport') || inputLower.includes('fun')) {
+          if (vehicle.features.some(f => f.toLowerCase().includes('sport'))) {
+            matchScore += 2;
+            matchReason = 'Perfect balance of sporty and practical';
+          }
+        }
+
+        return { ...vehicle, matchReason: matchReason || vehicle.matchReason };
+      }).sort((a, b) => {
+        const aHasReason = a.matchReason ? 1 : 0;
+        const bHasReason = b.matchReason ? 1 : 0;
+        return bHasReason - aHasReason;
+      });
+    }
+
+    setFilteredVehicles(filtered);
   };
 
   const suggestedInputs = [
@@ -168,6 +228,7 @@ const VehicleShoppingModule = () => {
                   size="sm" 
                   variant="gradient"
                   className="absolute bottom-3 right-3"
+                  onClick={handleSearch}
                 >
                   <Search className="w-4 h-4" />
                 </Button>
@@ -300,15 +361,16 @@ const VehicleShoppingModule = () => {
         </div>
 
         {/* Results Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-foreground">
-              Recommended for You
-            </h2>
-            <Badge variant="secondary" className="text-sm">
-              {filteredVehicles.length} vehicles found
-            </Badge>
-          </div>
+        {hasSearched && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-foreground">
+                Recommended for You
+              </h2>
+              <Badge variant="secondary" className="text-sm">
+                {filteredVehicles.length} vehicles found
+              </Badge>
+            </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVehicles.map((vehicle) => (
@@ -372,6 +434,7 @@ const VehicleShoppingModule = () => {
             ))}
           </div>
         </div>
+        )}
       </div>
     </div>
   );
