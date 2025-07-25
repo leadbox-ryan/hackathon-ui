@@ -1,0 +1,764 @@
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import { 
+  Search, 
+  Zap, 
+  Fuel, 
+  Battery, 
+  DollarSign, 
+  Calendar, 
+  Gauge, 
+  Star,
+  MessageCircle,
+  Sparkles 
+} from 'lucide-react';
+
+
+interface Vehicle {
+  id: string;
+  name: string;
+  price: number;
+  year: number;
+  image: string;
+  vin: string;
+  fuelType: 'gas' | 'hybrid' | 'electric';
+  condition: 'new' | 'used' | 'certified';
+  mpg: string;
+  horsepower: number;
+  features: string[];
+  matchReason?: string;
+}
+
+const mockVehicles: Vehicle[] = [
+  {
+    id: '1',
+    name: 'Ford Mustang Dark Horse',
+    price: 99402,
+    year: 2024,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1010639/pictures/ffcc2547-eeba-4be6-bd83-dadafc513d5e-XXL',
+    vin: '1FA6P8R03R5505379',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '18/25',
+    horsepower: 400,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Iconic American sports car'
+  },
+  {
+    id: '2',
+    name: 'Ford Bronco Raptor',
+    price: 126382,
+    year: 2024,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1081893/pictures/649c14bd-b6b1-4868-aeae-96e403878ac4-XXL',
+    vin: '1FMEE0RR5RLA82694',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '22/30',
+    horsepower: 375,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Ultimate off-road adventure vehicle'
+  },
+  {
+    id: '3',
+    name: 'Ford Escape Active',
+    price: 36994,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1124737/pictures/5fd72378-291a-4907-9148-71bc58b78a7d-XXL',
+    vin: '1FMCU0GN4SUA00691',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '28/35',
+    horsepower: 188,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Perfect for families with kids'
+  },
+  {
+    id: '4',
+    name: 'Ford Escape ST-Line',
+    price: 42094,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1132086/pictures/bde1dcfa-7151-4758-ae10-242e543ad67d-XXL',
+    vin: '1FMCU0MZ2SUA11955',
+    fuelType: 'hybrid',
+    condition: 'new',
+    mpg: '40/45',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Great fuel efficiency for your needs'
+  },
+  {
+    id: '5',
+    name: 'Ford Escape ST-Line Select',
+    price: 46744,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1132088/pictures/6098d5e8-3433-4a67-98e3-e02ad68ddb36-XXL',
+    vin: '1FMCU9NZXSUA12550',
+    fuelType: 'hybrid',
+    condition: 'new',
+    mpg: '40/45',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","All Wheel Drive","Back-Up Camera"],
+    matchReason: 'Great fuel efficiency for your needs'
+  },
+  {
+    id: '6',
+    name: 'Ford Transit Cargo Van',
+    price: 57750,
+    year: 2024,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1149258/pictures/5cc8d3f7-a1da-43de-821f-aeda341abb2d-XXL',
+    vin: '1FTBR1Y8XRKB68776',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '20/28',
+    horsepower: 298,
+    features: ["Back-Up Camera","Keyless Entry","WiFi Hotspot"],
+    matchReason: 'Versatile commercial van solution'
+  },
+  {
+    id: '7',
+    name: 'Ford Transit Cargo Van',
+    price: 57750,
+    year: 2024,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1154978/pictures/4c4d9df3-8ba9-4ec5-8ddc-09691bd5dd7f-XXL',
+    vin: '1FTBR1Y85RKB68748',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '20/28',
+    horsepower: 298,
+    features: ["Back-Up Camera","Keyless Entry","WiFi Hotspot"],
+    matchReason: 'Versatile commercial van solution'
+  },
+  {
+    id: '8',
+    name: 'Ford Escape PHEV',
+    price: 41694,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1154981/pictures/31ff7d3d-581e-45ba-a732-ff61e7bc5a5a-XXL',
+    vin: '1FMCU0E16SUA40710',
+    fuelType: 'electric',
+    condition: 'new',
+    mpg: '100/95 MPGe',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Electric performance with great efficiency'
+  },
+  {
+    id: '9',
+    name: 'Ford Transit Cargo Van',
+    price: 57750,
+    year: 2024,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1165244/pictures/f2270515-65c2-42bc-b278-819ed912fb03-XXL',
+    vin: '1FTBR1Y80RKB72111',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '20/28',
+    horsepower: 298,
+    features: ["Back-Up Camera","Keyless Entry","WiFi Hotspot"],
+    matchReason: 'Versatile commercial van solution'
+  },
+  {
+    id: '10',
+    name: 'Ford F-150 XL',
+    price: 52500,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1200220/pictures/f0d04f87-7a0e-4345-b0ac-da22cb5c7d05-XXL',
+    vin: '1FTMF1KPXSKD19302',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '22/30',
+    horsepower: 338,
+    features: ["Back-Up Camera","Bluetooth Connection","Keyless Entry"],
+    matchReason: 'America\'s best-selling truck'
+  },
+  {
+    id: '11',
+    name: 'Ford F-150 XLT',
+    price: 60645,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1200223/pictures/9652c9e1-8dff-4df3-8394-cec2beee9f57-XXL',
+    vin: '1FTEW3LP2SKD30406',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '22/30',
+    horsepower: 338,
+    features: ["Back-Up Camera","Bluetooth Connection","Keyless Entry"],
+    matchReason: 'America\'s best-selling truck'
+  },
+  {
+    id: '12',
+    name: 'Ford F-150 XLT',
+    price: 116794,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1200226/pictures/96da9629-de69-41ef-b84e-2c31780b6a1c-XXL',
+    vin: '1FTFW3L58SFA01589',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '18/25',
+    horsepower: 450,
+    features: ["Back-Up Camera","Bluetooth Connection","Heated Front Seats"],
+    matchReason: 'America\'s best-selling truck'
+  },
+  {
+    id: '13',
+    name: 'Ford Escape PHEV',
+    price: 39794,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1205075/pictures/26753e42-8c1d-47e2-9757-516bbd38615b-XXL',
+    vin: '1FMCU0E13SUA66228',
+    fuelType: 'electric',
+    condition: 'new',
+    mpg: '100/95 MPGe',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Electric performance with great efficiency'
+  },
+  {
+    id: '14',
+    name: 'Ford F-150 XLT',
+    price: 60925,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1212026/pictures/2c280395-b364-41a8-b20b-2ca77cd8508f-XXL',
+    vin: '1FTEW3LP8SKD40096',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '22/30',
+    horsepower: 338,
+    features: ["Back-Up Camera","Bluetooth Connection","Keyless Entry"],
+    matchReason: 'America\'s best-selling truck'
+  },
+  {
+    id: '15',
+    name: 'Ford Maverick XLT',
+    price: 46895,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1213480/pictures/db95fa9f-d0d3-4a6b-ab1e-553a7421aafa-XXL',
+    vin: '3FTTW8J37SRA23507',
+    fuelType: 'hybrid',
+    condition: 'new',
+    mpg: '40/45',
+    horsepower: 200,
+    features: ["All Wheel Drive","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Great fuel efficiency for your needs'
+  },
+  {
+    id: '16',
+    name: 'Ford Explorer Active',
+    price: 52680,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1220364/pictures/06c11167-eaa5-4d22-b592-dda7169e733c-XXL',
+    vin: '1FMUK8DHXSGA78530',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '22/30',
+    horsepower: 288,
+    features: ["3rd Row Seat","Adaptive Cruise Control","Back-Up Camera"],
+    matchReason: 'Perfect for families with kids'
+  },
+  {
+    id: '17',
+    name: 'Ford Escape ST-Line',
+    price: 43594,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1224079/pictures/8c5447db-7d73-4b96-9398-85137b71a2e3-XXL',
+    vin: '1FMCU9MZ0SUA67669',
+    fuelType: 'hybrid',
+    condition: 'new',
+    mpg: '40/45',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","All Wheel Drive","Back-Up Camera"],
+    matchReason: 'Great fuel efficiency for your needs'
+  },
+  {
+    id: '18',
+    name: 'Ford Escape PHEV',
+    price: 39594,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1229608/pictures/050ae235-35cb-4863-b795-4557f6740cbd-XXL',
+    vin: '1FMCU0E16SUA65848',
+    fuelType: 'electric',
+    condition: 'new',
+    mpg: '100/95 MPGe',
+    horsepower: 200,
+    features: ["Adaptive Cruise Control","Back-Up Camera","Bluetooth Connection"],
+    matchReason: 'Electric performance with great efficiency'
+  },
+  {
+    id: '19',
+    name: 'Ford Expedition Tremor',
+    price: 106008,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1229612/pictures/f3cf524c-ef94-4f83-b6ef-498112428c2e-XXL',
+    vin: '1FMJU1RG1SEA02520',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '20/28',
+    horsepower: 438,
+    features: ["3rd Row Seat","Adaptive Cruise Control","Back-Up Camera"],
+    matchReason: 'Maximum space for large families'
+  },
+  {
+    id: '20',
+    name: 'Ford Maverick LARIAT',
+    price: 53295,
+    year: 2025,
+    image: 'https://cardealerstg.blob.core.windows.net/erinwoodford/vehicles/1229620/pictures/3601e581-93e0-4d24-8e89-01788592bbfc-XXL',
+    vin: '3FTTW8SA3SRA23145',
+    fuelType: 'gas',
+    condition: 'new',
+    mpg: '28/35',
+    horsepower: 250,
+    features: ["Adaptive Cruise Control","All Wheel Drive","Back-Up Camera"],
+    matchReason: 'Affordable compact truck with great features'
+  }
+];
+
+const VehicleShoppingModule = () => {
+  const [preferenceMode, setPreferenceMode] = useState<'want' | 'dont-want'>('want');
+  const [userInput, setUserInput] = useState('');
+  const [priceRange, setPriceRange] = useState([30000, 60000]);
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [minHorsepower, setMinHorsepower] = useState([150]);
+  const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleFuelTypeToggle = (fuelType: string) => {
+    setSelectedFuelTypes(prev => 
+      prev.includes(fuelType) 
+        ? prev.filter(t => t !== fuelType)
+        : [...prev, fuelType]
+    );
+  };
+
+  const handleConditionToggle = (condition: string) => {
+    setSelectedConditions(prev => 
+      prev.includes(condition) 
+        ? prev.filter(c => c !== condition)
+        : [...prev, condition]
+    );
+  };
+
+  const handleSearch = async () => {
+    setHasSearched(true);
+    setIsLoading(true);
+    
+    try {
+      // Build the query string with user requirements
+      const requirements = [];
+      
+      if (userInput.trim()) {
+        requirements.push(`User said: "${userInput.trim()}"`);
+      }
+      
+      if (selectedFuelTypes.length > 0) {
+        requirements.push(`Fuel types: ${selectedFuelTypes.join(', ')}`);
+      }
+      
+      if (selectedConditions.length > 0) {
+        requirements.push(`Condition: ${selectedConditions.join(', ')}`);
+      }
+      
+      requirements.push(`Budget: $${priceRange[0].toLocaleString()} - $${priceRange[1].toLocaleString()}`);
+      requirements.push(`Minimum horsepower: ${minHorsepower[0]}hp`);
+      
+      const queryText = requirements.join('. ');
+      
+      // Make API call to local LLM
+      const response = await fetch(`http://localhost:8000/search?query=${encodeURIComponent(queryText)}&dealer=ErinwoodFord&format=vins&top_k=10`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const apiResult = await response.json();
+      
+      // Filter vehicles based on VINs returned by the API
+      let filtered: Vehicle[] = [];
+      
+      if (apiResult.vins && Array.isArray(apiResult.vins)) {
+        // First, filter by VINs from API
+        const vinsFromApi = apiResult.vins;
+        filtered = mockVehicles.filter(vehicle => vinsFromApi.includes(vehicle.vin));
+        
+        // If no vehicles match the VINs, fall back to local filtering
+        if (filtered.length === 0) {
+          console.warn('No vehicles matched API VINs, falling back to local filtering');
+          filtered = mockVehicles.filter(vehicle => {
+            const priceMatch = vehicle.price >= priceRange[0] && vehicle.price <= priceRange[1];
+            const fuelTypeMatch = selectedFuelTypes.length === 0 || selectedFuelTypes.includes(vehicle.fuelType);
+            const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(vehicle.condition);
+            const horsepowerMatch = vehicle.horsepower >= minHorsepower[0];
+            
+            return priceMatch && fuelTypeMatch && conditionMatch && horsepowerMatch;
+          });
+        }
+      } else {
+        // If API doesn't return VINs, use local filtering
+        console.warn('API did not return VINs, using local filtering');
+        filtered = mockVehicles.filter(vehicle => {
+          const priceMatch = vehicle.price >= priceRange[0] && vehicle.price <= priceRange[1];
+          const fuelTypeMatch = selectedFuelTypes.length === 0 || selectedFuelTypes.includes(vehicle.fuelType);
+          const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(vehicle.condition);
+          const horsepowerMatch = vehicle.horsepower >= minHorsepower[0];
+          
+          return priceMatch && fuelTypeMatch && conditionMatch && horsepowerMatch;
+        });
+      }
+
+      // Enhanced matching based on user input
+      if (userInput.trim()) {
+        const inputLower = userInput.toLowerCase();
+        filtered = filtered.map(vehicle => {
+          let matchReason = '';
+
+          if (inputLower.includes('kid') || inputLower.includes('family')) {
+            if (vehicle.name.toLowerCase().includes('explorer') || vehicle.name.toLowerCase().includes('expedition')) {
+              matchReason = 'Perfect for families with kids';
+            }
+          }
+
+          if (inputLower.includes('fuel') || inputLower.includes('efficient')) {
+            if (vehicle.fuelType === 'hybrid' || vehicle.fuelType === 'electric') {
+              matchReason = 'Great fuel efficiency for your needs';
+            }
+          }
+
+          if (inputLower.includes('budget') || inputLower.includes('affordable')) {
+            if (vehicle.price < 40000) {
+              matchReason = 'Great value in your budget';
+            }
+          }
+
+          if (inputLower.includes('sport') || inputLower.includes('performance') || inputLower.includes('fast')) {
+            if (vehicle.name.toLowerCase().includes('mustang') || vehicle.name.toLowerCase().includes('raptor')) {
+              matchReason = 'High-performance vehicle for driving enthusiasts';
+            }
+          }
+
+          if (inputLower.includes('work') || inputLower.includes('business') || inputLower.includes('cargo')) {
+            if (vehicle.name.toLowerCase().includes('transit') || vehicle.name.toLowerCase().includes('f-150')) {
+              matchReason = 'Perfect for work and business needs';
+            }
+          }
+
+          return { ...vehicle, matchReason: matchReason || vehicle.matchReason };
+        }).sort((a, b) => {
+          const aHasCustomReason = a.matchReason ? 1 : 0;
+          const bHasCustomReason = b.matchReason ? 1 : 0;
+          return bHasCustomReason - aHasCustomReason;
+        });
+      }
+
+      setFilteredVehicles(filtered);
+      
+      // Log the API response for debugging
+      console.log('LLM API Response:', apiResult);
+      
+    } catch (error) {
+      console.error('Error calling LLM API:', error);
+      
+      // Fallback to local filtering if API fails
+      let filtered = mockVehicles.filter(vehicle => {
+        const priceMatch = vehicle.price >= priceRange[0] && vehicle.price <= priceRange[1];
+        const fuelTypeMatch = selectedFuelTypes.length === 0 || selectedFuelTypes.includes(vehicle.fuelType);
+        const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(vehicle.condition);
+        const horsepowerMatch = vehicle.horsepower >= minHorsepower[0];
+        
+        return priceMatch && fuelTypeMatch && conditionMatch && horsepowerMatch;
+      });
+      
+      setFilteredVehicles(filtered);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const suggestedInputs = [
+    "I need a car that fits 3 kids and uses less gas",
+    "Looking for something reliable under $30k",
+    "Want a fuel-efficient car for daily commuting",
+    "Need something sporty but practical"
+  ];
+
+  return (
+    <div className="min-h-screen bg-background p-4 md:p-6">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+            Find Your Perfect Vehicle
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Tell me what you're looking for, and I'll help you find the right match
+          </p>
+        </div>
+
+        {/* Toggle Bar */}
+        <div className="flex justify-center">
+          <div className="bg-secondary p-1 rounded-lg inline-flex">
+            <Button
+              variant={preferenceMode === 'want' ? 'toggle-active' : 'toggle'}
+              onClick={() => setPreferenceMode('want')}
+              className="rounded-md"
+            >
+              <Sparkles className="w-4 h-4" />
+              I Want
+            </Button>
+            <Button
+              variant={preferenceMode === 'dont-want' ? 'toggle-active' : 'toggle'}
+              onClick={() => setPreferenceMode('dont-want')}
+              className="rounded-md"
+            >
+              I Don't Want
+            </Button>
+          </div>
+        </div>
+
+        {/* Conversational Input */}
+        <Card className="shadow-card-hover">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-foreground">
+                <MessageCircle className="w-5 h-5 text-primary" />
+                <span className="font-medium">
+                  {preferenceMode === 'want' ? "What are you looking for?" : "What would you prefer to avoid?"}
+                </span>
+              </div>
+              
+              <div className="relative">
+                <Textarea
+                  placeholder={preferenceMode === 'want' 
+                    ? "e.g., I need a car that fits 3 kids and uses less gas..." 
+                    : "e.g., I don't want anything that uses too much gas..."
+                  }
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  className="min-h-[100px] resize-none border-border focus:ring-primary"
+                />
+                <Button 
+                  size="sm" 
+                  variant="gradient"
+                  className="absolute bottom-3 right-3"
+                  onClick={handleSearch}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {suggestedInputs.map((suggestion, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setUserInput(suggestion)}
+                    className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Feature Refinement */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Fuel Type */}
+          <Card className="shadow-card-hover">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Fuel className="w-4 h-4 text-primary" />
+                  <h3 className="font-medium text-foreground">Fuel Type</h3>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { id: 'gas', icon: Fuel, label: 'Gasoline' },
+                    { id: 'hybrid', icon: Zap, label: 'Hybrid' },
+                    { id: 'electric', icon: Battery, label: 'Electric' }
+                  ].map(({ id, icon: Icon, label }) => (
+                    <Button
+                      key={id}
+                      variant={selectedFuelTypes.includes(id) ? 'toggle-active' : 'toggle'}
+                      size="sm"
+                      onClick={() => handleFuelTypeToggle(id)}
+                      className="w-full justify-start"
+                    >
+                      <Icon className="w-4 h-4" />
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Price Range */}
+          <Card className="shadow-card-hover">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-primary" />
+                  <h3 className="font-medium text-foreground">Budget</h3>
+                </div>
+                <div className="space-y-3">
+                  <Slider
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    max={80000}
+                    min={20000}
+                    step={1000}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>${priceRange[0].toLocaleString()}</span>
+                    <span>${priceRange[1].toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Condition */}
+          <Card className="shadow-card-hover">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <h3 className="font-medium text-foreground">Condition</h3>
+                </div>
+                <div className="space-y-2">
+                  {['new', 'certified', 'used'].map((condition) => (
+                    <Button
+                      key={condition}
+                      variant={selectedConditions.includes(condition) ? 'toggle-active' : 'toggle'}
+                      size="sm"
+                      onClick={() => handleConditionToggle(condition)}
+                      className="w-full justify-start capitalize"
+                    >
+                      {condition === 'certified' ? 'Certified Pre-Owned' : condition}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance */}
+          <Card className="shadow-card-hover">
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Gauge className="w-4 h-4 text-primary" />
+                  <h3 className="font-medium text-foreground">Performance</h3>
+                </div>
+                <div className="space-y-3">
+                  <div className="text-sm text-muted-foreground">
+                    Min Horsepower: {minHorsepower[0]}hp
+                  </div>
+                  <Slider
+                    value={minHorsepower}
+                    onValueChange={setMinHorsepower}
+                    max={400}
+                    min={100}
+                    step={10}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Results Section */}
+        {hasSearched && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-foreground">
+                Recommended for You
+              </h2>
+              <Badge variant="secondary" className="text-sm">
+                {filteredVehicles.length} vehicles found
+              </Badge>
+            </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredVehicles.map((vehicle) => (
+              <Card key={vehicle.id} className="overflow-hidden shadow-card-hover hover:shadow-elegant transition-all duration-300 cursor-pointer">
+                <div className="aspect-video overflow-hidden">
+                  <img 
+                    src={vehicle.image} 
+                    alt={vehicle.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-bold text-lg text-foreground">{vehicle.name}</h3>
+                      <p className="text-sm text-muted-foreground">{vehicle.year} • {vehicle.condition}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg text-primary">${vehicle.price.toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  {vehicle.matchReason && (
+                    <div className="bg-accent/10 border border-accent/20 rounded-md p-2">
+                      <p className="text-sm text-accent font-medium flex items-center gap-2">
+                        <Star className="w-4 h-4" />
+                        {vehicle.matchReason}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-1">
+                      <Fuel className="w-4 h-4 text-muted-foreground" />
+                      <span>{vehicle.mpg} MPG</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Gauge className="w-4 h-4 text-muted-foreground" />
+                      <span>{vehicle.horsepower} HP</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    {vehicle.features.slice(0, 2).map((feature) => (
+                      <Badge key={feature} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                    {vehicle.features.length > 2 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{vehicle.features.length - 2} more
+                      </Badge>
+                    )}
+                  </div>
+
+                  <Button className="w-full" variant="gradient">
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default VehicleShoppingModule;
